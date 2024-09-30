@@ -4,6 +4,7 @@ const dropArea = document.body;
 const fileHandler = document.querySelector('.file-handler');
 const canvasWrapper = document.querySelector('.canvas-wrapper');
 const canvasDiv = document.getElementById('canvas');
+const pixelVisionCheckbox = document.getElementById('pixelVisionCheckbox');
 
 let scale = 1;
 const zoomSpeed = 0.1;
@@ -158,12 +159,9 @@ slider.addEventListener('input', () => {
     }, 500);
 });
 
-const pixelVisionCheckbox = document.getElementById('pixelVisionCheckbox');
+
 pixelVisionCheckbox.addEventListener('change', () => {
-    const canvasDiv = document.querySelector('.canvas');
-    if (canvasDiv) {
-        canvasDiv.style.imageRendering = pixelVisionCheckbox.checked ? 'pixelated' : 'auto';
-    }
+    canvasDiv.style.imageRendering = pixelVisionCheckbox.checked ? 'pixelated' : 'auto';
 });
 
 const exitButton = document.getElementById('exit-button');
