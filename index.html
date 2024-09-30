@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/Sevastopol-Interface.ttf">
+    <link rel="stylesheet" href="./css/utilitaries.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    
+    <title>Denso</title>
+</head>
+
+<body>
+    <div class="Loader"></div>
+    <main>
+        <header>
+            <nav>
+                <div class="logo">Denso</div>
+                <menu>
+                    <div class="about">About us</div>
+                    <div class="settings">Settings</div>
+                </menu>
+            </nav>
+        </header>
+
+        <section>
+            <div class="container file-handler bg-gradient">
+                
+                <div class="wrapper waiting">
+                    <button class="picker-but">Choose a file to compress 
+                        <img src="./assets/Arrow - Down 2.svg" alt="">
+                    </button>
+                    <p>or drag it in here if you prefer.</p>
+                </div>
+
+                <div class="editing">
+                    <div class="left">
+                        <button id="exit-button" class="picker-but">Exit</button>
+                    </div>
+                    <div class="right">
+                        <div class="file-info">
+                            <div class="name"></div>
+                            <div class="sizes">
+                                <span class="old-size"></span>
+                                <span class="new-size"></span>
+                            </div>
+                            <div class="percentage"></div>
+                        </div>
+
+                        <div class="resolution">
+                            <label for="slider">Quality: <span id="resolution">70%</span></label>
+                            <input type="range" id="slider" class="slider" min="1" max="100" value="70">
+                        </div>
+
+                        <div class="vert-gap">
+                            <label for="pixelVisionCheckbox">Pixelated Render</label>
+                            <div class="checkbox-wrapper-6">
+                                <input class="tgl tgl-light" id="pixelVisionCheckbox" type="checkbox" />
+                                <label class="tgl-btn" for="pixelVisionCheckbox"></label>
+                            </div>
+                        </div>
+                        
+                        <button id="download-btn" class="picker-but">Download</button>
+                    </div>
+                </div>
+
+                
+                   <div id="canvas"></div>
+                
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <h3>What is denso.?</h3>
+                <p>denso. is an open-source compression tool that is built-in directly with your browser. Everything is
+                    done locally on your machine, so you don’t have to send your data anywhere else.</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
