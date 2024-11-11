@@ -548,6 +548,10 @@ section {
     justify-content: center;
     align-content: center;
     gap: 20px;
+
+    a{
+        color: #fff;
+    }
 }
 
 
@@ -586,7 +590,7 @@ section {
 
 
 .bright {
-    animation:  1s removeBrightness 4s forwards;
+    animation:  2s removeBrightness 4s forwards;
 }
 
 @keyframes removeBrightness {
