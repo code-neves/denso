@@ -10,7 +10,8 @@ const DOM = {
     resolutionDisplay: document.getElementById('resolution'),
     exitButton: document.getElementById('exit-button'),
     waitingElement: document.querySelector('.waiting'),
-    editingElement: document.querySelector('.editing')
+    editingElement: document.querySelector('.editing'),
+    lightContainer: document.querySelector('.lights-container')
 };
 
 // Configuration
@@ -120,6 +121,7 @@ function updateFileHandlerState() {
     DOM.fileHandler.style.background = 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,1))';
     DOM.waitingElement.style.display = 'none';
     DOM.editingElement.style.display = 'flex';
+    DOM.lightContainer.style.display = 'none';
 }
 
 function updateFileInfo(file, { originalSizeKB, compressedSizeKB, percentageReduction }) {
@@ -205,6 +207,7 @@ function resetUI() {
     DOM.fileHandler.style.background = '';
     DOM.waitingElement.style.display = 'flex';
     DOM.editingElement.style.display = 'none';
+    DOM.lightContainer.style.display = 'flex';
     fileInput.value = '';
     state.currentFile = null;
 }

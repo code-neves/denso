@@ -377,6 +377,7 @@ section {
     .right {
         display: flex;
         flex-direction: column;
+        max-width: 350px;
         gap: 0.7rem;
         padding: 12px;
         border-radius: 4px;
@@ -404,7 +405,10 @@ section {
             font-size: 1rem;
             user-select: none;
             pointer-events: none;
-
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
             
             .percentage {
                 background-color: rgb(18, 207, 1);
@@ -590,11 +594,14 @@ section {
 
 
 .bright {
-    animation:  2s removeBrightness 4s forwards;
+    animation:  3s removeBrightness 4s forwards;
 }
 
 @keyframes removeBrightness {
     0% {
+        filter: brightness(1);
+    }
+    50%{
         filter: brightness(2);
     }
     100% {
@@ -608,6 +615,7 @@ section {
         font-family: 'Bitlike', sans-serif;
         font-size: 1.9rem;
         margin-left: 4px;
+        color: #fff;
     }
 }
 
