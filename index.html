@@ -1,49 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./assets/Sevastopol-Interface.ttf">
-    <link rel="stylesheet" href="./css/utilitaries.css">
-    <link rel="stylesheet" href="./css/style.css">
+    <meta name="description" content="denso. - A browser-based image compression tool">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Favicon -->
     <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
+    
+    <!-- Fonts -->
+    <link rel="preload" href="./assets/Sevastopol-Interface.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
     
-    <title>Denso</title>
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/utilitaries.css">
+    <link rel="stylesheet" href="./css/style.css">
+    
+    <title>denso. | Browser-based Image Compression</title>
 </head>
 
-<body>
-    <div class="Loader"></div>
+<body class="bright">
+    <!-- Loader (Commented out but preserved for future use) -->
+    <!--
+    <div class="loader" aria-hidden="true">
+        <div class="loader-logo">
+            <img src="assets/32DnTpQhNjijiykJrepTG3wBrMc.avif" alt="denso. logo" width="32" height="32">
+        </div>
+        <div class="loader-text">
+            Just a moment. <div class="spinner" aria-label="Loading">|</div>
+        </div>
+        <div class="credits">Made with ☕ by <a href="#" rel="noopener">Renato</a></div>
+    </div>
+    -->
+
     <main>
-        <header>
-            <nav>
-                <div class="logo">Denso</div>
+        <!-- Header Navigation -->
+        <header class="unselectable">
+            <nav aria-label="Main navigation">
+                <div class="logo-group">
+                    <div class="logo">
+                        <img src="./assets/32DnTpQhNjijiykJrepTG3wBrMc.avif" 
+                             alt="denso. logo"
+                             width="32" 
+                             height="32">
+                    </div>
+                    <div class="logo-text">
+                        <p><span>denso.</span></p>
+                    </div>
+                </div>
+                
                 <menu>
-                    <div class="about">About us</div>
-                    <div class="settings">Settings</div>
+                    <div class="menu-item">
+                        <div class="item-container">
+                            <div class="item">
+                                <p class="text-hover">saiba mais</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="menu-item button">
+                        <div class="item-container">
+                            <div class="item">
+                                <p>download</p>
+                            </div>
+                        </div>
+                    </div>
                 </menu>
             </nav>
         </header>
 
-        <section>
+        <!-- Introduction Section -->
+        <section aria-labelledby="about-heading">
+            <div class="container">
+                <h3 id="about-heading">What is denso. ?</h3>
+                <p>denso. is an open-source compression tool that is built-in directly with your browser. Everything is
+                    done locally in your machine, so you don't have to send your data anywhere else.</p>
+            </div>
+        </section>
+
+        <!-- File Handler Section -->
+        <section aria-label="Image compression tool">
             <div class="container file-handler bg-gradient">
-                
-                <div class="wrapper waiting">
-                    <button class="picker-but">Choose a file to compress 
-                        <img src="./assets/Arrow - Down 2.svg" alt="">
+                <!-- File Selection Area -->
+                <div class="wrapper waiting unselectable">
+                    <button class="picker-but" aria-label="Select image file">
+                        Choose a file to compress 
+                        <img src="./assets/Arrow - Down 2.svg" 
+                             alt="Down arrow"
+                             width="16" 
+                             height="16">
                     </button>
                     <p>or drag it in here if you prefer.</p>
                 </div>
 
-                <div class="editing">
-                    <div class="left">
-                        <button id="exit-button" class="picker-but">Exit</button>
+                <!-- Loading Animation -->
+                <div class="lights-container waiting" aria-hidden="true">
+                    <div class="ring">
+                        <div class="light light1"></div>
                     </div>
+                    <div class="ring">
+                        <div class="light light2"></div>
+                    </div>
+                    <div class="ring">
+                        <div class="light light3"></div>
+                    </div>
+                </div>
+                
+                <!-- Image Editor -->
+                <div class="editing" aria-label="Image editor">
+                    <div class="left">
+                        <button id="exit-button" 
+                                class="exit picker-but"
+                                aria-label="Exit editor">
+                            <img src="assets/x.svg" 
+                                 alt="Close"
+                                 width="16" 
+                                 height="16">
+                        </button>
+                    </div>
+                    
                     <div class="right">
-                        <div class="file-info">
+                        <!-- File Information -->
+                        <div class="file-info" aria-live="polite">
                             <div class="name"></div>
                             <div class="sizes">
                                 <span class="old-size"></span>
@@ -52,39 +132,55 @@
                             <div class="percentage"></div>
                         </div>
 
+                        <!-- Quality Control -->
                         <div class="resolution">
-                            <label for="slider">Quality: <span id="resolution">70%</span></label>
-                            <input type="range" id="slider" class="slider" min="1" max="100" value="70">
+                            <label for="slider">
+                                Quality: <span id="resolution">70%</span>
+                            </label>
+                            <input type="range" 
+                                   id="slider" 
+                                   class="slider" 
+                                   min="1" 
+                                   max="100" 
+                                   value="70"
+                                   aria-label="Image quality">
                         </div>
 
+                        <!-- Pixel Vision Toggle -->
                         <div class="vert-gap">
                             <label for="pixelVisionCheckbox">Pixelated Render</label>
                             <div class="checkbox-wrapper-6">
-                                <input class="tgl tgl-light" id="pixelVisionCheckbox" type="checkbox" />
-                                <label class="tgl-btn" for="pixelVisionCheckbox"></label>
+                                <input class="tgl tgl-light" 
+                                       id="pixelVisionCheckbox" 
+                                       type="checkbox"
+                                       aria-label="Toggle pixelated rendering">
+                                <label class="tgl-btn" 
+                                       for="pixelVisionCheckbox"
+                                       aria-hidden="true"></label>
                             </div>
                         </div>
                         
-                        <button id="download-btn" class="picker-but">Download</button>
+                        <!-- Download Button -->
+                        <button id="download-btn" 
+                                class="picker-but"
+                                aria-label="Download compressed image">
+                            Download
+                        </button>
                     </div>
                 </div>
 
-                
-                   <div id="canvas"></div>
-                
-            </div>
-        </section>
-
-        <section>
-            <div class="container">
-                <h3>What is denso.?</h3>
-                <p>denso. is an open-source compression tool that is built-in directly with your browser. Everything is
-                    done locally on your machine, so you don’t have to send your data anywhere else.</p>
+                <!-- Canvas Display -->
+                <div id="canvas" 
+                     role="img" 
+                     aria-label="Image preview"></div>
             </div>
         </section>
     </main>
 
-    <script src="script.js"></script>
-</body>
+    <!-- Version Tag -->
+    <div class="credits-tag picker-but" aria-label="Version">denso 1.01v</div>
 
+    <!-- Scripts -->
+    <script src="script.js" defer></script>
+</body>
 </html>

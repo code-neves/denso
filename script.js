@@ -1,24 +1,33 @@
-const button = document.querySelector('.file-handler .wrapper button');
-const fileInput = createHiddenFileInput();
-const dropArea = document.body;
-const fileHandler = document.querySelector('.file-handler');
-const canvasWrapper = document.querySelector('.canvas-wrapper');
-const canvasDiv = document.getElementById('canvas');
-const pixelVisionCheckbox = document.getElementById('pixelVisionCheckbox');
+// Constants and DOM Elements
+const DOM = {
+    button: document.querySelector('.file-handler .wrapper button'),
+    dropArea: document.body,
+    fileHandler: document.querySelector('.file-handler'),
+    canvasWrapper: document.querySelector('.canvas-wrapper'),
+    canvasDiv: document.getElementById('canvas'),
+    pixelVisionCheckbox: document.getElementById('pixelVisionCheckbox'),
+    slider: document.getElementById('slider'),
+    resolutionDisplay: document.getElementById('resolution'),
+    exitButton: document.getElementById('exit-button'),
+    waitingElement: document.querySelector('.waiting'),
+    editingElement: document.querySelector('.editing')
+};
 
-let scale = 1;
-const zoomSpeed = 0.1;
-let isPanning = false;
-let startX, startY, initialScrollLeft, initialScrollTop;
+// Configuration
+const CONFIG = {
+    scale: 1,
+    zoomSpeed: 0.1,
+    debounceTime: 500,
+    defaultQuality: 0.8
+};
 
-button.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', handleFileSelection);
-dropArea.addEventListener('dragover', handleDragOver);
-dropArea.addEventListener('dragleave', handleDragLeave);
-dropArea.addEventListener('drop', handleFileDrop);
-fileHandler.addEventListener('wheel', handleWheelScroll, { passive: false });
+// State
+const state = {
+    currentFile: null,
+    debounceTimer: null
+};
 
-
+// File Input Creation
 function createHiddenFileInput() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -28,71 +37,47 @@ function createHiddenFileInput() {
     return input;
 }
 
-function handleFileSelection(event) {
-    const file = event.target.files[0];
-    if (file) {
-        processImage(file, 1);  
-    }
-}
+const fileInput = createHiddenFileInput();
 
-function handleFileDrop(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    dropArea.classList.remove('dragging');
-
-    const file = event.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-        processImage(file, 1);  
-    }
-}
-
-function handleDragOver(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    dropArea.classList.add('dragging');
-}
-
-function handleDragLeave(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    dropArea.classList.remove('dragging');
-}
-
+// Image Processing Functions
 function processImage(file, quality) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        loadImageAndCompress(event.target.result, quality, file);
-    };
-    reader.readAsDataURL(file);
-}
-
-function loadImageAndCompress(imageSrc, quality, file) {
-    const img = new Image();
-    img.src = imageSrc;
-
-    img.onload = () => {
-        const canvas = createCanvasWithImage(img);
-        const compressedDataURL = compressImageOnCanvas(canvas, quality);
-        const { originalSizeKB, compressedSizeKB, percentageReduction } = calculateCompressionStats(file.size, compressedDataURL);
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
         
-        updateUIWithCompressedImage(compressedDataURL, img.width, img.height);
-        updateFileInfo(file, originalSizeKB, compressedSizeKB, percentageReduction);
-        setupDownloadButton(compressedDataURL);
-    };
+        reader.onload = (event) => {
+            const img = new Image();
+            
+            img.onload = () => {
+                try {
+                    const canvas = createCanvasWithImage(img);
+                    const compressedDataURL = compressImageOnCanvas(canvas, quality);
+                    const stats = calculateCompressionStats(file.size, compressedDataURL);
+                    
+                    resolve({ compressedDataURL, img, stats });
+                } catch (error) {
+                    reject(error);
+                }
+            };
+
+            img.onerror = () => reject(new Error('Failed to load image'));
+            img.src = event.target.result;
+        };
+
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+    });
 }
 
 function createCanvasWithImage(img) {
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
-
-    const ctx = createCanvasContext(canvas);
+    
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) throw new Error('Failed to get canvas context');
+    
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     return canvas;
-}
-
-function createCanvasContext(canvas) {
-    return canvas.getContext('2d', { willReadFrequently: true });
 }
 
 function compressImageOnCanvas(canvas, quality) {
@@ -107,85 +92,156 @@ function calculateCompressionStats(originalSize, compressedDataURL) {
     return { originalSizeKB, compressedSizeKB, percentageReduction };
 }
 
-function updateUIWithCompressedImage(compressedDataURL, imgWidth, imgHeight) {
-    if (canvasDiv) {
-        canvasDiv.style.backgroundImage = `url(${compressedDataURL})`; 
-        canvasDiv.style.width = `${imgWidth}px`; 
-        canvasDiv.style.height = `${imgHeight}px`;
-        canvasDiv.style.backgroundSize = 'contain';
-        canvasDiv.style.backgroundRepeat = 'no-repeat';
-        canvasDiv.style.backgroundPosition = 'center';
-        canvasDiv.style.display = 'block'; 
-    }
-    fileHandler.classList.remove('bg-gradient');
-    fileHandler.classList.add('filled');
-    fileHandler.style.background = 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,1))'; 
-    document.querySelector('.waiting').style.display = 'none';
-    document.querySelector('.editing').style.display = 'flex';
+// UI Update Functions
+function updateUI({ compressedDataURL, img, stats }) {
+    updateImageDisplay(compressedDataURL, img);
+    updateFileInfo(state.currentFile, stats);
+    setupDownloadButton(compressedDataURL);
+    updateFileHandlerState();
 }
 
+function updateImageDisplay(compressedDataURL, img) {
+    if (DOM.canvasDiv) {
+        Object.assign(DOM.canvasDiv.style, {
+            backgroundImage: `url(${compressedDataURL})`,
+            width: `${img.width}px`,
+            height: `${img.height}px`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            display: 'block'
+        });
+    }
+}
 
-function updateFileInfo(file, originalSizeKB, compressedSizeKB, percentageReduction) {
-    document.querySelector('.file-info .name').textContent = file.name;
-    document.querySelector('.file-info .sizes').textContent = `${originalSizeKB.toFixed(2)}KB > ${compressedSizeKB.toFixed(2)}KB`;
-    document.querySelector('.file-info .percentage').textContent = `- ${percentageReduction}%`;
+function updateFileHandlerState() {
+    DOM.fileHandler.classList.remove('bg-gradient');
+    DOM.fileHandler.classList.add('filled');
+    DOM.fileHandler.style.background = 'linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,1))';
+    DOM.waitingElement.style.display = 'none';
+    DOM.editingElement.style.display = 'flex';
+}
+
+function updateFileInfo(file, { originalSizeKB, compressedSizeKB, percentageReduction }) {
+    const fileInfo = {
+        name: document.querySelector('.file-info .name'),
+        sizes: document.querySelector('.file-info .sizes'),
+        percentage: document.querySelector('.file-info .percentage')
+    };
+
+    fileInfo.name.textContent = file.name;
+    fileInfo.sizes.textContent = `${originalSizeKB.toFixed(2)}KB > ${compressedSizeKB.toFixed(2)}KB`;
+    fileInfo.percentage.textContent = `- ${percentageReduction}%`;
+}
+
+// Event Handlers
+async function handleFileProcessing(file) {
+    if (!file || !file.type.startsWith('image/')) {
+        console.error('Invalid file type. Only image files are allowed.');
+        return;
+    }
+
+    try {
+        state.currentFile = file;
+        const quality = DOM.slider.value / 100;
+        const result = await processImage(file, quality);
+        updateUI(result);
+    } catch (error) {
+        console.error('Error processing image:', error);
+        resetUI();
+    }
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    DOM.dropArea.classList.add('dragging');
+}
+
+function handleDragLeave(event) {
+    event.preventDefault();
+    DOM.dropArea.classList.remove('dragging');
+}
+
+function handleFileDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    DOM.dropArea.classList.remove('dragging');
+
+    const file = Array.from(event.dataTransfer.items)
+        .find(item => item.kind === 'file' && item.type.startsWith('image/'))
+        ?.getAsFile();
+
+    if (file) handleFileProcessing(file);
+}
+
+function handlePaste(event) {
+    const file = Array.from(event.clipboardData.items)
+        .find(item => item.type.startsWith('image/'))
+        ?.getAsFile();
+
+    if (file) handleFileProcessing(file);
 }
 
 function setupDownloadButton(compressedDataURL) {
     const downloadButton = document.getElementById('download-btn');
     downloadButton.onclick = () => {
-        const quality = slider.value;
-        downloadImage(compressedDataURL, quality);
+        const link = document.createElement('a');
+        link.href = compressedDataURL;
+        link.download = `compressed-image-${DOM.slider.value}.jpg`;
+        link.click();
     };
 }
 
-function downloadImage(compressedDataURL, quality) {
-    const link = document.createElement('a');
-    link.href = compressedDataURL;
-    link.download = `compressed-image-${quality}.jpg`;
-    link.click();
-}
-
-let debounceTimer;
-const slider = document.getElementById('slider');
-const resolutionDisplay = document.getElementById('resolution');
-
-slider.addEventListener('input', () => {
-    resolutionDisplay.textContent = `${slider.value}%`;
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-        const quality = slider.value / 100;
-        processImage(fileInput.files[0], quality);
-    }, 500);
-});
-
-
-pixelVisionCheckbox.addEventListener('change', () => {
-    canvasDiv.style.imageRendering = pixelVisionCheckbox.checked ? 'pixelated' : 'auto';
-});
-
-const exitButton = document.getElementById('exit-button');
-exitButton.addEventListener('click', resetUI);
-
 function resetUI() {
-    if (canvasDiv) {
-        canvasDiv.style.backgroundImage = 'none';
-        canvasDiv.style.display = 'none'; 
+    if (DOM.canvasDiv) {
+        Object.assign(DOM.canvasDiv.style, {
+            backgroundImage: 'none',
+            display: 'none'
+        });
     }
-    fileHandler.classList.add('bg-gradient');
-    fileHandler.classList.remove('filled');
-    fileHandler.style.background = ''; 
-    document.querySelector('.waiting').style.display = 'flex';
-    document.querySelector('.editing').style.display = 'none';
-    fileInput.value = ''; 
+    
+    DOM.fileHandler.classList.add('bg-gradient');
+    DOM.fileHandler.classList.remove('filled');
+    DOM.fileHandler.style.background = '';
+    DOM.waitingElement.style.display = 'flex';
+    DOM.editingElement.style.display = 'none';
+    fileInput.value = '';
+    state.currentFile = null;
 }
 
 function handleWheelScroll(event) {
     event.preventDefault();
-    scale = Math.min(Math.max(0.1, scale + (Math.sign(event.deltaY) > 0 ? -zoomSpeed : zoomSpeed)), 100);
-    canvasDiv.style.transform = `scale(${scale})`;
+    CONFIG.scale = Math.min(Math.max(0.1, CONFIG.scale + 
+        (Math.sign(event.deltaY) > 0 ? -CONFIG.zoomSpeed : CONFIG.zoomSpeed)), 100);
+    DOM.canvasDiv.style.transform = `scale(${CONFIG.scale})`;
 }
 
+// Event Listeners
+function initializeEventListeners() {
+    DOM.button.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', e => handleFileProcessing(e.target.files[0]));
+    DOM.dropArea.addEventListener('dragover', handleDragOver);
+    DOM.dropArea.addEventListener('dragleave', handleDragLeave);
+    DOM.dropArea.addEventListener('drop', handleFileDrop);
+    DOM.fileHandler.addEventListener('wheel', handleWheelScroll, { passive: false });
+    document.addEventListener('paste', handlePaste);
+    
+    DOM.slider.addEventListener('input', () => {
+        DOM.resolutionDisplay.textContent = `${DOM.slider.value}%`;
+        clearTimeout(state.debounceTimer);
+        state.debounceTimer = setTimeout(() => {
+            if (state.currentFile) {
+                handleFileProcessing(state.currentFile);
+            }
+        }, CONFIG.debounceTime);
+    });
 
+    DOM.pixelVisionCheckbox.addEventListener('change', () => {
+        DOM.canvasDiv.style.imageRendering = DOM.pixelVisionCheckbox.checked ? 'pixelated' : 'auto';
+    });
 
+    DOM.exitButton.addEventListener('click', resetUI);
+}
 
+// Initialize the application
+initializeEventListeners();
