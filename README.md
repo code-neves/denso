@@ -1,4 +1,4 @@
-# Image Compression Tool - README
+# Image Compression Tool 
 
 A simple web app to upload, compress, and download images with adjustable quality.
 
@@ -19,10 +19,6 @@ A simple web app to upload, compress, and download images with adjustable qualit
 - **DOM Elements**: Buttons, canvas, sliders, and file input.
 - **Functions**: Handle file input, image compression, UI updates, and stats.
 - **Event Handlers**: Manage file selection, drag-and-drop, paste, zoom, and pixelation.
-
-## Installation
-1. Clone or download the repository.
-2. Open `index.html` in your browser.
 
 ## License
 MIT License
