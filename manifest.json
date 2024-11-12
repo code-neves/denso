@@ -2,7 +2,7 @@
     "name": "denso",
     "short_name": "denso",
     "description": "A compression tool that runs locally on device.",
-    "start_url": "http://127.0.0.1:5500/",
+    "start_url": "https://code-neves.github.io/denso/",
     "display": "standalone",
     "background_color": "#191919",
     "theme_color": "#e8e8e8",
