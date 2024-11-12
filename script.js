@@ -248,3 +248,6 @@ function initializeEventListeners() {
 
 // Initialize the application
 initializeEventListeners();
+
+
+  

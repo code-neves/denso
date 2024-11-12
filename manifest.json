@@ -1,0 +1,39 @@
+{
+    "name": "denso",
+    "short_name": "denso",
+    "description": "A compression tool that runs locally on device.",
+    "start_url": "http://127.0.0.1:5500/",
+    "display": "standalone",
+    "background_color": "#191919",
+    "theme_color": "#e8e8e8",
+    "icons": [
+      {
+        "src": "./assets/icons/icon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "./assets/icons/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "screenshots": [
+      {
+        "src": "./assets/screenshots/scw1.jpg",
+        "sizes": "1280x640",
+        "type": "image/jpg",
+        "form-factor": "wide",
+        "label": "Main page"
+      },
+      {
+        "src": "./assets/screenshots/scs1.jpg",
+        "sizes": "554x697",
+        "type": "image/jpg",
+        "form-factor": "narrow",
+        "label": "Introduction"
+      }
+      
+    ]
+  }
+  

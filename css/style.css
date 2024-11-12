@@ -266,6 +266,7 @@ menu {
 }
 .file-handler {
     position: relative;
+    width: 100% !important; 
     max-width: 800px;
     border-radius: 10px;
     outline: 1px solid rgba(255, 255, 255, 0.133);
@@ -331,7 +332,8 @@ menu {
 section {
     color: #c9c9c9;
     display: flex;
-
+    width: 100%;
+    max-width: 800px;
     h3 {
         font-family: 'Bitlike', sans-serif;
         font-size: 36px;
@@ -623,4 +625,70 @@ section {
     position: absolute;
     right: 32px;
     bottom: 32px;
+}
+
+@media screen and (max-width: 1024px) {
+    /* Add your styles for screens smaller than 1024px here */
+
+    main {
+        width: 100%;
+        height: 100vh;
+        flex-direction: column;
+        justify-content: start;
+        gap: 50px;
+    }
+
+    header nav {
+        width: 100%;
+        padding: 10px 16px;
+    }
+    section{
+        padding: 0 16px;
+    }
+    .logo-group {
+        gap: 8px;
+    }
+
+    .logo {
+        height: 20px;
+        width: 50px;
+    }
+
+    .logo-text p {
+        font-size: 30px;
+    }
+
+    menu {
+        gap: 10px;
+    }
+
+    .container {
+       width: 80%;
+       min-width: 300px;
+        
+        p{
+            font-size: 12px;
+        }
+    }
+
+    .file-handler {
+        
+    }
+
+    .picker-but {
+        padding: 5px 15px;
+    }
+
+    .editing {
+        padding: 10px;
+    }
+
+    .button {
+        padding: 5px 15px;
+    }
+
+    .credits-tag{
+        right: 16px;
+        bottom: 16px;
+    }
 }
